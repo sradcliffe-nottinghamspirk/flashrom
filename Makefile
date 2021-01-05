@@ -794,6 +794,9 @@ CONFIG_DIGILENT_SPI ?= yes
 # Disable J-Link for now.
 CONFIG_JLINK_SPI ?= no
 
+# Enable VIA VL805 programmer for now.
+CONFIG_VL805 ?= yes
+
 # Disable wiki printing by default. It is only useful if you have wiki access.
 CONFIG_PRINT_WIKI ?= no
 
@@ -1124,6 +1127,12 @@ ifeq ($(CONFIG_MSTARDDC_SPI), yes)
 FEATURE_CFLAGS += $(call debug_shell,grep -q "LINUX_I2C_SUPPORT := yes" .features && printf "%s" "-D'CONFIG_MSTARDDC_SPI=1'")
 NEED_LINUX_I2C += CONFIG_MSTARDDC_SPI
 PROGRAMMER_OBJS += mstarddc_spi.o
+endif
+
+ifeq ($(CONFIG_VL805), yes)
+FEATURE_CFLAGS += -D'CONFIG_VL805=1'
+PROGRAMMER_OBJS += vl805.o
+NEED_PCI := yes
 endif
 
 ifeq ($(CONFIG_CH341A_SPI), yes)

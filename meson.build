@@ -68,6 +68,7 @@ config_usbblaster_spi = get_option('config_usbblaster_spi')
 config_stlinkv3_spi = get_option('config_stlinkv3_spi')
 config_lspcon_i2c_spi = get_option('config_lspcon_i2c_spi')
 config_realtek_mst_i2c_spi = get_option('config_realtek_mst_i2c_spi')
+config_vl805 = get_option('config_vl805')
 
 cargs = []
 deps = []
@@ -124,6 +125,7 @@ else
   config_rayer_spi = false
   config_satamv = false
   config_satasii = false
+  config_vl805 = false
 endif
 
 # set defines for configured programmers
@@ -332,6 +334,10 @@ endif
 if need_serial
   srcs += 'custom_baud.c'
   srcs += 'serial.c'
+endif
+if config_vl805
+  srcs += 'vl805.c'
+  cargs += '-DCONFIG_VL805=1'
 endif
 
 prefix = get_option('prefix')

@@ -142,6 +142,9 @@ enum programmer {
 #if CONFIG_REALTEK_MST_I2C_SPI == 1
 	PROGRAMMER_REALTEK_MST_I2C_SPI,
 #endif
+#if CONFIG_VL805 == 1
+	PROGRAMMER_VL805,
+#endif
 	PROGRAMMER_INVALID /* This must always be the last entry. */
 };
 
@@ -597,6 +600,12 @@ int jlink_spi_init(void);
 /* ni845x_spi.c */
 #if CONFIG_NI845X_SPI == 1
 int ni845x_spi_init(void);
+#endif
+
+/* vl805.c */
+#if CONFIG_VL805 == 1
+int vl805_init(void);
+extern const struct dev_entry devs_vl805[];
 #endif
 
 /* flashrom.c */
