@@ -420,7 +420,7 @@ pkgg.generate(
 )
 
 conf.set('VERSION', version)
-conf.set('MAN_DATE', run_command('util/getrevision.sh', '--date', 'flashrom.8.tmpl').stdout().strip())
+conf.set('MAN_DATE', run_command('util/getversion.sh', '-m').stdout().strip())
 configure_file(
   input : 'flashrom.8.tmpl',
   output : 'flashrom.8',
