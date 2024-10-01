@@ -28,7 +28,7 @@ PROGRAM = flashrom
 STRIP   ?= strip
 INSTALL = install
 DIFF    = diff
-PREFIX  ?= /usr/local
+PREFIX  ?= /usr
 MANDIR  ?= $(PREFIX)/share/man
 CFLAGS  ?= -std=c99 -D_DEFAULT_SOURCE -D_POSIX_C_SOURCE=200809L -D_BSD_SOURCE -Os -Wall -Wextra -Wno-unused-parameter -Wshadow -Wmissing-prototypes -Wwrite-strings
 EXPORTDIR ?= .
@@ -111,18 +111,18 @@ override TARGET_OS := $(strip $(call debug_shell,$(CC) $(CPPFLAGS) -E os.h 2>/de
     | tail -1 | cut -f 2 -d'"'))
 
 ifeq ($(TARGET_OS), Darwin)
-override CPPFLAGS += -I/opt/local/include -I/usr/local/include
-override LDFLAGS += -L/opt/local/lib -L/usr/local/lib
+override CPPFLAGS += -I/opt/local/include -I/usr/include
+override LDFLAGS += -L/opt/local/lib -L/usr/lib
 endif
 
 ifeq ($(TARGET_OS), FreeBSD)
-override CPPFLAGS += -I/usr/local/include
-override LDFLAGS += -L/usr/local/lib
+override CPPFLAGS += -I/usr/include
+override LDFLAGS += -L/usr/lib
 endif
 
 ifeq ($(TARGET_OS), OpenBSD)
-override CPPFLAGS += -I/usr/local/include
-override LDFLAGS += -L/usr/local/lib
+override CPPFLAGS += -I/usr/include
+override LDFLAGS += -L/usr/lib
 endif
 
 ifeq ($(TARGET_OS), NetBSD)
@@ -131,8 +131,8 @@ override LDFLAGS += -L/usr/pkg/lib
 endif
 
 ifeq ($(TARGET_OS), DragonFlyBSD)
-override CPPFLAGS += -I/usr/local/include
-override LDFLAGS += -L/usr/local/lib
+override CPPFLAGS += -I/usr/include
+override LDFLAGS += -L/usr/lib
 endif
 
 ifeq ($(TARGET_OS), DOS)
