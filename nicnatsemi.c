@@ -107,5 +107,9 @@ static uint8_t nicnatsemi_chip_readb(const struct flashctx *flash,
 }
 
 #else
-#error PCI port I/O access is not supported on this architecture yet.
+int nicnatsemi_init(void)
+{
+	return -1;
+}
+//#error PCI port I/O access is not supported on this architecture yet.
 #endif

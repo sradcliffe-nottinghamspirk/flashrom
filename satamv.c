@@ -15,7 +15,6 @@
  */
 
 /* Datasheets are not public (yet?) */
-#if defined(__i386__) || defined(__x86_64__)
 
 #include <stdlib.h>
 #include "flash.h"
@@ -32,6 +31,7 @@ const struct dev_entry satas_mv[] = {
 	{0},
 };
 
+#if defined(__i386__) || defined(__x86_64__)
 #define NVRAM_PARAM			0x1045c
 #define FLASH_PARAM			0x1046c
 #define EXPANSION_ROM_BAR_CONTROL	0x00d2c
@@ -189,5 +189,9 @@ static uint8_t satamv_chip_readb(const struct flashctx *flash,
 }
 
 #else
-#error PCI port I/O access is not supported on this architecture yet.
+int satamv_init(void)
+{
+	return -1;
+}
+//#error PCI port I/O access is not supported on this architecture yet.
 #endif

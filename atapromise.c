@@ -166,5 +166,9 @@ static uint8_t atapromise_chip_readb(const struct flashctx *flash, const chipadd
 }
 
 #else
-#error PCI port I/O access is not supported on this architecture yet.
+int atapromise_init(void)
+{
+	return -1;
+}
+//#error PCI port I/O access is not supported on this architecture yet.
 #endif

@@ -14,8 +14,6 @@
  * GNU General Public License for more details.
  */
 
-#if defined(__i386__) || defined(__x86_64__)
-
 #include <stdlib.h>
 #include "flash.h"
 #include "programmer.h"
@@ -34,6 +32,8 @@ const struct dev_entry nics_realtek[] = {
 
 	{0},
 };
+
+#if defined(__i386__) || defined(__x86_64__)
 
 static void nicrealtek_chip_writeb(const struct flashctx *flash, uint8_t val, chipaddr addr);
 static uint8_t nicrealtek_chip_readb(const struct flashctx *flash, const chipaddr addr);
@@ -130,5 +130,9 @@ static uint8_t nicrealtek_chip_readb(const struct flashctx *flash, const chipadd
 }
 
 #else
-#error PCI port I/O access is not supported on this architecture yet.
+int nicrealtek_init(void)
+{
+	return -1;
+}
+//#error PCI port I/O access is not supported on this architecture yet.
 #endif

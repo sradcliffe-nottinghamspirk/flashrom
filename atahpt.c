@@ -95,5 +95,8 @@ static uint8_t atahpt_chip_readb(const struct flashctx *flash,
 }
 
 #else
-#error PCI port I/O access is not supported on this architecture yet.
+int atahpt_init(void) {
+	return -1;
+}
+//#error PCI port I/O access is not supported on this architecture yet.
 #endif

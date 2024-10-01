@@ -281,5 +281,9 @@ static int dlc5_shutdown(void *data) {
 }
 
 #else
-#error PCI port I/O access is not supported on this architecture yet.
+int rayer_spi_init(void)
+{
+	return -1;
+}
+//#error PCI port I/O access is not supported on this architecture yet.
 #endif
