@@ -68,38 +68,40 @@ static int vl805_spi_send_command(const struct flashctx *flash,
 	uint32_t indata = 0;
 	unsigned int curwritecnt = 0;
 	unsigned int curreadcnt = 0;
-msg_pdbg("Write: 0x%08x cnt: %d Read: cnt %d", writearr[0], writecnt, readcnt);
-	vl805_setregval(VL805_REG_SPI_CHIP_ENABLE_LEVEL, 0x00000000);
-//	programmer_delay(50);
+	unsigned int curtotalcnt = 0;
+	unsigned int readpos = 0;
 
-	for (j = 0; j < writecnt; j += 4) {
-		curwritecnt = min(4, writecnt - j);
+	unsigned int writes_left = writecnt;
+	unsigned int reads_left = readcnt;
+	unsigned int totalcnt = writecnt + readcnt;
+
+	//msg_pdbg("vl805 write: 0x%08x cnt: %d Read: cnt %d, totalcnt %d\n", writearr[0], writecnt, readcnt, totalcnt);
+	vl805_setregval(VL805_REG_SPI_CHIP_ENABLE_LEVEL, 0x00000000);
+
+	for (j = 0; j < totalcnt; j += 4) {
+		curtotalcnt = min(4, totalcnt - j);
+		curwritecnt = min(4, writes_left);
+		curreadcnt = min(4 - curwritecnt, reads_left);
+
 		outdata = 0;
-		for (i = 0; i < curwritecnt; i++) {
+		for (i = 0; i < curtotalcnt; i++) {
 			outdata <<= 8;
-			outdata |= writearr[j + i];
+			if (i < curwritecnt) {
+				outdata |= writearr[j + i];
+				writes_left--;
+			}
 		}
 		vl805_setregval(VL805_REG_SPI_OUTDATA, outdata);
-//		programmer_delay(50);
-		vl805_setregval(VL805_REG_SPI_TRANSACTION, 0x00000580 | (curwritecnt << 3));
-//		programmer_delay(50);
-	}
-
-	/* Superfluous, the original driver doesn't do that, but we want to have a quiet bus during read. */
-//	vl805_setregval(VL805_REG_SPI_OUTDATA, 0);
-
-	for (j = 0; j < readcnt; j += 4) {
-		curreadcnt = min(4, readcnt - j);
-		vl805_setregval(VL805_REG_SPI_TRANSACTION, 0x00000580 | (curreadcnt << 3));
-//		programmer_delay(100);
+		//msg_pdbg("VL805_REG_SPI_OUTDATA: 0x%08x curwritecnt=%d\n", outdata, curwritecnt);
+		vl805_setregval(VL805_REG_SPI_TRANSACTION, 0x00000580 | (curtotalcnt << 3));
+		//msg_pdbg("VL805_REG_SPI_TRANSACTION: 0x%08x curtotalcnt=%d\n", 0x00000580 | (curtotalcnt << 3), curtotalcnt);
 		indata = vl805_getregval(VL805_REG_SPI_INDATA);
-		for (i = 0; i < curreadcnt; i++) {
-			unsigned pos = curreadcnt - (i + 1);
-			readarr[j + i] = (indata >> (8 * pos)) & 0xff;
+		//msg_pdbg("VL805_REG_SPI_INDATAN: 0x%08x curreadcnt=%d\n", indata, curreadcnt);
+		for (i = curreadcnt; i > 0; i--) {
+			readarr[readpos++] = (indata >> (8 * (i-1))) & 0xff;
+			reads_left--;
 		}
 	}
-
-//	programmer_delay(50);
 
 	vl805_setregval(VL805_REG_SPI_CHIP_ENABLE_LEVEL, 0x00000001);
 
@@ -149,7 +151,7 @@ int vl805_init(void)
 	vl805_programmer_active(0x1);
 
 	vl805_setregval(VL805_REG_SPI_CHIP_ENABLE_LEVEL, 0x00000001);
-//	vl805_setregval(VL805_REG_0x30004, 0x00000200);
+	// vl805_setregval(VL805_REG_0x30004, 0x00000200);
 	val = vl805_getregval(VL805_REG_WB_EN);
 	vl805_setregval(VL805_REG_WB_EN, (val & 0xffffff00) | 0x01);
 	val = vl805_getregval(VL805_REG_STOP_POLLING);
@@ -160,7 +162,7 @@ int vl805_init(void)
 	vl805_setregval(VL805_REG_CLK_DIV, 0x0000000a);
 
 	/* Some sort of cleanup sequence, just copied from the logs. */
-//	vl805_setregval(VL805_REG_SPI_TRANSACTION, 0x00000000);
+	//vl805_setregval(VL805_REG_SPI_TRANSACTION, 0x00000000);
 	vl805_programmer_active(0x0);
 
 	register_shutdown(vl805_shutdown, NULL);
