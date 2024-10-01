@@ -68,8 +68,9 @@ static int vl805_spi_send_command(const struct flashctx *flash,
 	uint32_t indata = 0;
 	unsigned int curwritecnt = 0;
 	unsigned int curreadcnt = 0;
-
+msg_pdbg("Write: 0x%08x cnt: %d Read: cnt %d", writearr[0], writecnt, readcnt);
 	vl805_setregval(VL805_REG_SPI_CHIP_ENABLE_LEVEL, 0x00000000);
+//	programmer_delay(50);
 
 	for (j = 0; j < writecnt; j += 4) {
 		curwritecnt = min(4, writecnt - j);
@@ -79,21 +80,26 @@ static int vl805_spi_send_command(const struct flashctx *flash,
 			outdata |= writearr[j + i];
 		}
 		vl805_setregval(VL805_REG_SPI_OUTDATA, outdata);
+//		programmer_delay(50);
 		vl805_setregval(VL805_REG_SPI_TRANSACTION, 0x00000580 | (curwritecnt << 3));
+//		programmer_delay(50);
 	}
 
 	/* Superfluous, the original driver doesn't do that, but we want to have a quiet bus during read. */
-	vl805_setregval(VL805_REG_SPI_OUTDATA, 0);
+//	vl805_setregval(VL805_REG_SPI_OUTDATA, 0);
 
 	for (j = 0; j < readcnt; j += 4) {
 		curreadcnt = min(4, readcnt - j);
 		vl805_setregval(VL805_REG_SPI_TRANSACTION, 0x00000580 | (curreadcnt << 3));
+//		programmer_delay(100);
 		indata = vl805_getregval(VL805_REG_SPI_INDATA);
 		for (i = 0; i < curreadcnt; i++) {
 			unsigned pos = curreadcnt - (i + 1);
 			readarr[j + i] = (indata >> (8 * pos)) & 0xff;
 		}
 	}
+
+//	programmer_delay(50);
 
 	vl805_setregval(VL805_REG_SPI_CHIP_ENABLE_LEVEL, 0x00000001);
 
@@ -143,16 +149,18 @@ int vl805_init(void)
 	vl805_programmer_active(0x1);
 
 	vl805_setregval(VL805_REG_SPI_CHIP_ENABLE_LEVEL, 0x00000001);
-	vl805_setregval(VL805_REG_0x30004, 0x00000200);
-	vl805_setregval(VL805_REG_WB_EN, 0xffffff01);
-	vl805_setregval(VL805_REG_STOP_POLLING, 0x00000001);
+//	vl805_setregval(VL805_REG_0x30004, 0x00000200);
+	val = vl805_getregval(VL805_REG_WB_EN);
+	vl805_setregval(VL805_REG_WB_EN, (val & 0xffffff00) | 0x01);
+	val = vl805_getregval(VL805_REG_STOP_POLLING);
+	vl805_setregval(VL805_REG_STOP_POLLING, (val & 0xffffff00) | 0x01);
 
 	/* We send 4 uninitialized(?) bytes to the flash chip here. */
 	vl805_setregval(VL805_REG_SPI_TRANSACTION, 0x000005a0);
 	vl805_setregval(VL805_REG_CLK_DIV, 0x0000000a);
 
 	/* Some sort of cleanup sequence, just copied from the logs. */
-	vl805_setregval(VL805_REG_SPI_TRANSACTION, 0x00000000);
+//	vl805_setregval(VL805_REG_SPI_TRANSACTION, 0x00000000);
 	vl805_programmer_active(0x0);
 
 	register_shutdown(vl805_shutdown, NULL);
