@@ -99,6 +99,7 @@ srcs = files(
   'sst49lfxxxc.c',
   'sst_fwhub.c',
   'stm50.c',
+  'vl805.c',
   'w29ee011.c',
   'w39.c',
   'writeprotect.c',
@@ -545,6 +546,12 @@ programmer = {
     'groups'  : [ group_ftdi, group_external ],
     'srcs'    : files('usbblaster_spi.c'),
     'flags'   : [ '-DCONFIG_USBBLASTER_SPI=1' ],
+  },
+  'vl805_spi' : {
+    'deps'    : [ libpci ],
+    'groups'  : [ group_pci, group_internal ],
+    'srcs'    : files('vl805.c', 'pcidev.c'),
+    'flags'   : [ '-DCONFIG_VL805_SPI=1' ],
   },
 }
 

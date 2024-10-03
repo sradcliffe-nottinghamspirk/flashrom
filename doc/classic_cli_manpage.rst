@@ -292,6 +292,7 @@ All operations involving any chip access (probe/read/write/...) require the ``-p
         * ``ch341a_spi``          (for SPI flash ROMs attached to WCH CH341A)
         * ``ch347_api``           (for SPI flash ROMs attached to WHC CH347)
         * ``digilent_spi``        (for SPI flash ROMs attached to iCEblink40 development boards)
+        * ``vl805_spi``           (for SPI flash ROMs attached to VIA VL805 PCIe USB 3.0 Host Controller)
         * ``jlink_spi``           (for SPI flash ROMs attached to SEGGER J-Link and compatible devices)
         * ``ni845x_spi``          (for SPI flash ROMs attached to National Instruments USB-8451 or USB-8452)
         * ``stlinkv3_spi``        (for SPI flash ROMs attached to STMicroelectronics STLINK V3 devices)
@@ -1108,6 +1109,13 @@ An optional ``spispeed`` parameter specifies the frequency of the SPI bus. Synta
 
 where ``frequency`` can be ``62.5k``, ``125k``, ``250k``, ``500k``, ``1M``, ``2M`` or ``4M`` (in Hz).
 The default is a frequency of 4 MHz.
+
+
+vl805_spi programmer
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+This programmer supports SPI flash programming for chips attached the VL805 PCIe-USB 3.0
+Host controller.
 
 
 dirtyjtag_spi programmer

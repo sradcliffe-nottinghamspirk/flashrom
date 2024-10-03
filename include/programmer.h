@@ -99,6 +99,7 @@ extern const struct programmer_entry programmer_satasii;
 extern const struct programmer_entry programmer_serprog;
 extern const struct programmer_entry programmer_stlinkv3_spi;
 extern const struct programmer_entry programmer_usbblaster_spi;
+extern const struct programmer_entry programmer_vl805_spi;
 extern const struct programmer_entry programmer_dirtyjtag_spi;
 
 int programmer_init(const struct programmer_entry *prog, const char *param);
